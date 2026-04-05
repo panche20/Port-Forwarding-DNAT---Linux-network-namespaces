@@ -1,7 +1,16 @@
-# Port Forwarding (DNAT)
-This is exactly how:
-`docker run -p 8080:80 nginx`
-works under the hood.
+Linux Network Namespaces & Container Networking (DevOps Project)
+📌 Overview
+
+This project demonstrates how container networking actually works under the hood by building everything manually using Linux primitives.
+
+Instead of relying on Docker abstractions, we recreate:
+
+Container isolation (network namespaces)
+Container connectivity (veth pairs + bridge)
+Internet access (SNAT / MASQUERADE)
+Port forwarding (DNAT)
+
+👉 This is the exact foundation used by Docker and Kubernetes.
 
 ## What You’ll Build
 `Browser → EC2:8080 → iptables (DNAT) → ns1:80 (web server)`
@@ -9,14 +18,18 @@ works under the hood.
 - Gets forwarded to namespace
 - Namespace reponds back
 
-Step 1 — Clean Setup
-`sudo ip netns delete ns1 2>/dev/null`
-
-Step 2 — Create Namespace + veth
+Step 1 — Network Namespace. A network namespace provides an isolated network stack.
+Each namespace has: Its own interfaces (eth0, lo), Its own IP addresses, Its own routing table.
+In Docker, each container runs inside its own network namespace
 ```
 # Create namespace
 sudo ip netns add ns1
 
+Step 2 - veth Pair (Virtual Ethernet). A veth pair acts like a virtual cable:
+`vethA <------> vethB`
+One end is placed inside a namespace, The other stays on the host. Used to connect:
+- Container ↔ Host
+- Container ↔ Bridge
 # Create veth pair
 sudo ip link add veth-ns1 type veth peer name veth-host
 
