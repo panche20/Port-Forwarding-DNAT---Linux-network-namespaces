@@ -21,7 +21,7 @@ Port forwarding (DNAT)
 Step 1 — Network Namespace. A network namespace provides an isolated network stack.
 Each namespace has: Its own interfaces (eth0, lo), Its own IP addresses, Its own routing table.
 In Docker, each container runs inside its own network namespace
-```
+
 # Create namespace
 sudo ip netns add ns1
 
@@ -40,7 +40,7 @@ sudo ip link add veth-ns1 type veth peer name veth-host
 
 # Move one end to namespace
 sudo ip link set veth-ns1 netns ns1
-```
+
 
 Step 3 — Assign IPs
 ```
